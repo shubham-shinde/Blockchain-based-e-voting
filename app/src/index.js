@@ -16,6 +16,7 @@ import { default as contract } from 'truffle-contract'
  */
 
 import voting_artifacts from '../../build/contracts/Voting.json'
+console.log(voting_artifacts);
 
 var Voting = contract(voting_artifacts);
 
@@ -34,9 +35,9 @@ window.voteForCandidate = function(candidate) {
      * everywhere we have a transaction call
      */
     Voting.deployed().then(function(contractInstance) {
-      contractInstance.voteForCandidate(candidateName, {gas: 140000, from: account}).then(function() {
+      contractInstance.voteForCandidate(web3.utils.asciiToHex(candidateName), {gas: 140000, from: account}).then(function() {
         let div_id = candidates[candidateName];
-        return contractInstance.totalVotesFor.call(candidateName).then(function(v) {
+        return contractInstance.totalVotesFor.call(web3.utils.asciiToHex(candidateName)).then(function(v) {
           $("#" + div_id).html(v.toString());
           $("#msg").html("");
         });
@@ -55,7 +56,7 @@ $( document ).ready(function() {
   } else {
     console.warn("No web3 detected. Falling back to http://localhost:8545. You should remove this fallback when you deploy live, as it's inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask");
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-    window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+    window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
   }
 
 
@@ -80,7 +81,7 @@ $( document ).ready(function() {
   for (var i = 0; i < candidateNames.length; i++) {
     let name = candidateNames[i];
     Voting.deployed().then(function(contractInstance) {
-      contractInstance.totalVotesFor.call(name).then(function(v) {
+      contractInstance.totalVotesFor.call(web3.utils.asciiToHex(name)).then(function(v) {
         $("#" + candidates[name]).html(v.toString());
       });
     })
