@@ -1,8 +1,5 @@
-const ConvertLib = artifacts.require("ConvertLib");
-const MetaCoin = artifacts.require("MetaCoin");
+const Voting = artifacts.require("Voting");
 
 module.exports = function(deployer) {
-  deployer.deploy(ConvertLib);
-  deployer.link(ConvertLib, MetaCoin);
-  deployer.deploy(MetaCoin);
+  deployer.deploy(Voting, ['shubham', 'kamran', 'vinayak'].map(x => web3.utils.asciiToHex(x)), {gas: 6000000});
 };
